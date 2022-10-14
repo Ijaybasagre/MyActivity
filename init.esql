@@ -1,0 +1,37 @@
+
+
+CREATE COMPUTE MODULE init
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		Declare paymentData Reference To InputRoot.JSON.Data;
+		SET Environment.Input.Value = InputRoot.JSON.Data.value;
+		SET Environment.transaction.AccountNumber = paymentData.accountNumber;
+		SET Environment.transaction.TransactionType = paymentData.transactionType;
+		SET Environment.transaction.Branch.Id = paymentData.branch.id;
+		SET Environment.transaction.Branch.Code = paymentData.branch.code;
+		SET Environment.transaction.TransactionStatus = paymentData.transactionStatus;
+		SET Environment.initFlag = TRUE;
+		CALL isEven();
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE isEven() BEGIN
+		Declare isEven BOOLEAN;
+		Declare value INTEGER InputRoot.JSON.Data.value;
+		SET isEven = mod(value,2) = 0;
+		
+		If isEven THEN
+			SET Environment.Value = InputRoot.JSON.Data.value;
+			SET Environment.Even = TRUE;
+		ELSE
+			SET Environment.Value = InputRoot.JSON.Data.value;
+			SET Environment.Odd = TRUE;
+		END IF;
+	END;
+	
+
+	CREATE PROCEDURE CopyEntireMessage() BEGIN
+		SET OutputRoot = InputRoot;
+	END;
+END MODULE;
